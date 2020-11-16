@@ -103,18 +103,26 @@ function updateGrid() {
     let height = $('#height').val()
     let width = $('#width').val()
     let size = height * width
+    if(width % 2 !== 0 || height % 2 !== 0) {
+        $('.grid').css({
+            'width': size * width + 2,
+            'height': size * height + 2,
+        })
+    } else {
+        $('.grid').css({
+            'width': size * width + width/4,
+            'height': size * height + height/4,
+        })
+    }
     for (let x = 0; x < size; x++) {
         let div = $('<div>').attr('class', 'cell')
         div.css({
-            'flex': '0 0 ' + size,
-            'height': size
+            'flex-basis': size,
+            'height': size,
+            'width': size
         })
         $('.grid').append(div)
     }
-    $('.grid').css({
-        'width': size * width,
-        'height': size * height
-    })
     enableFill()
 }
 
