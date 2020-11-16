@@ -1,3 +1,6 @@
+//netlify site: https://reverent-wozniak-7329a9.netlify.app/
+
+//had to pull this out to append new colors
 let PALETTE = [
     'orange',
     'red',
@@ -58,8 +61,8 @@ function onFillEmptyClick() {
     let cells = $('.grid .cell')
     let selectedBackgroundColor = $('.active').css('background-color')
     for (let x = 0; x < cells.length; x++) {
-        console.log(cells[x])
-        console.log($(cells[x]).css('background-color'))
+       // console.log(cells[x])
+        //console.log($(cells[x]).css('background-color'))
         if ($(cells[x]).css('background-color') === 'rgba(0, 0, 0, 0)') {
             $(cells[x]).css('background-color', selectedBackgroundColor)
         }
@@ -72,19 +75,22 @@ function appendColor() {
     for (let x = 0; x < PALETTE.length; x++) {
         let currentColor = PALETTE[x]
         if (desiredColor === currentColor) {        
-            return $('.controls input').val('That color exits!')
-        } else if (desiredColor === 'That color exits!') {
+            return $('.controls input').val('That color exists!')
+        } else if (desiredColor === 'That color exists!') {
             return
         }
 
     }
     console.log(desiredColor)
     PALETTE.push(desiredColor)
-    let button = $('<button>').css('background', desiredColor)
+    let button = $('<button>').css('background-color', desiredColor)
     $('.palette').append(button)
     $('.palette button').removeClass('active')
     $(button).addClass('active')
     mouseIsDown = false
+    console.log('Palette length:', PALETTE.length)
+    console.log('Palette length:', $('.palette button').length)
+    $('.palette button').click(onPaletteClick)
 }
 
 
@@ -97,9 +103,6 @@ function updateGrid() {
     let height = $('#height').val()
     let width = $('#width').val()
     let size = height * width
-    console.log(height)
-    console.log(width)
-    console.log(size)
     for (let x = 0; x < size; x++) {
         let div = $('<div>').attr('class', 'cell')
         div.css({
@@ -107,7 +110,6 @@ function updateGrid() {
             'height': size
         })
         $('.grid').append(div)
-        console.log("made div")
     }
     $('.grid').css({
         'width': size * width,
@@ -119,25 +121,42 @@ function updateGrid() {
 function enableFill() {
     $('.palette button').click(onPaletteClick)
     $('.grid .cell').click(onGridClick).mouseenter(function () {
-    let mouseDown = $(this).mousedown(function () {
-        mouseIsDown = true
-    })
-    let mouseUp = $(this).mouseup(function () {
-        mouseIsDown = false
-    })
+        let mouseDown = $(this).mousedown(function () {
+            mouseIsDown = true
+        })
+        let mouseUp = $(this).mouseup(function () {
+            mouseIsDown = false
+        })
 
-    if (mouseIsDown) {
-        let selectedBackgroundColor = $('.active').css('background-color')
-        if ($(this).css('background-color') === selectedBackgroundColor)
-            $(this).css("background-color", "")
-        else
-            $(this).css("background-color", selectedBackgroundColor)
-    }
+        if (mouseIsDown) {
+            let selectedBackgroundColor = $('.active').css('background-color')
+            if ($(this).css('background-color') === selectedBackgroundColor)
+                $(this).css("background-color", "")
+            else
+                $(this).css("background-color", selectedBackgroundColor)
+        }
 
-    console.log(mouseIsDown)
-})
+        console.log(mouseIsDown)
+    })
 }
 
+function removeLastColor() {
+    console.log('Palette length:', PALETTE.length)
+    console.log('Palette length:', $('.palette button').length)
+    $('.palette button').last().remove()
+    PALETTE.pop()
+    console.log('has active button ', $('.palette button').hasClass('active'))
+    if(!($('.palette button').hasClass('active')) && $('.palette button').length > 0)
+        $('.palette button').last().addClass('active')
+}
+
+//fancy
+function fillRandomColors() {
+    $('.grid .cell').each(function () {
+        let randomColor = Math.floor(Math.random() * PALETTE.length);
+        $(this).css('background-color', PALETTE[randomColor])
+    })
+}
 
 
 makePalette()
@@ -167,4 +186,6 @@ $('.controls .clear').click(onClearClick)
 $('.controls .fill-all').click(onFillAllClick)
 $('.controls .fill-empty').click(onFillEmptyClick)
 $('.controls .append-color').click(appendColor)
+$('.controls .remove-color').click(removeLastColor)
+$('.controls .random-color').click(fillRandomColors)
 $('.grid-controls button').click(updateGrid)
